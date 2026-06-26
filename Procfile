@@ -1,0 +1,1 @@
+web: gunicorn fishing_project.wsgi:application
