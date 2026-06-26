@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Главная - Золотая рыбка{% endblock %}
+
+{% block content %}
+<section class="hero" style="background: linear-gradient(135deg, rgba(26, 58, 74, 0.5) 0%, rgba(43, 92, 111, 0.5) 100%), url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9OrXPEQXlmcNchrRazPB79-Ob5tofbp1pZA&s') no-repeat center center; background-size: cover;">
+    <div class="container text-center">
+        <h1 class="display-3 fw-bold">Добро пожаловать в "Золотую рыбку"</h1>
+        <p class="lead">Все для успешной рыбалки: удочки, катушки, приманки и снасти</p>
+        <a href="{% url 'catalog' %}" class="btn btn-light btn-lg mt-3">Перейти в каталог</a>
+    </div>
+</section>
+
+<div class="container">
+    <h2 class="mb-4">Популярные товары</h2>
+    <div class="row">
+        {% for product in popular_products %}
+            <div class="col-sm-6 col-md-4 col-lg-4 mb-4">
+                <div class="card product-card h-100">
+                    {% if product.photo %}
+                        <img src="{{ product.photo }}" class="card-img-top" alt="{{ product.name }}">
+                    {% else %}
+                        <img src="/media/default.jpg" class="card-img-top" alt="Нет фото">
+                    {% endif %}
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text text-muted">{{ product.definition|truncatechars:80 }}</p>
+                        <p class="price mt-auto">{{ product.price }} руб.</p>
+                        <a href="{% url 'product_detail' product.id %}" class="btn btn-outline-primary">Подробнее</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p>Товары временно отсутствуют.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="container mt-5">
+    <h2 class="mb-4">Категории</h2>
+    <div class="row">
+        {% for category in categories %}
+            <div class="col-md-3 col-sm-6 mb-3">
+                <a href="{% url 'catalog' %}?category={{ category.id }}" class="btn btn-outline-secondary w-100">
+                    {{ category.name }}
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

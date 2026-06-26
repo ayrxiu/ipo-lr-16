@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Оформление заказа</title>
+    <meta charset="UTF-8">
+    <style>
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .cart-items { border: 1px solid #ddd; padding: 15px; margin: 20px 0; }
+        .total { font-size: 20px; font-weight: bold; }
+        .form-group { margin: 15px 0; }
+        .form-group textarea { width: 100%; padding: 10px; }
+        .btn { background: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 3px; font-size: 16px; cursor: pointer; }
+        .btn:hover { background: #45a049; }
+        .messages { color: green; font-weight: bold; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Оформление заказа</h1>
+        <a href="{% url 'view_cart' %}">← Назад к корзине</a>
+        
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="{% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        
+        <div class="cart-items">
+            <h3>Ваши товары:</h3>
+            {% for item in cart.items.all %}
+                <p>{{ item.product.name }} × {{ item.quantity }} = {{ item.total_price }} руб.</p>
+            {% endfor %}
+            <div class="total">Итого: {{ cart.total_price }} руб.</div>
+        </div>
+        
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="address">Адрес доставки:</label>
+                <textarea name="address" id="address" rows="3" placeholder="Введите адрес доставки" required></textarea>
+            </div>
+            <button type="submit" class="btn">Оформить заказ</button>
+        </form>
+    </div>
+</body>
+</html>

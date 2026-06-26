@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Корзина</title>
+    <meta charset="UTF-8">
+    <style>
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .total { font-size: 20px; font-weight: bold; margin-top: 20px; }
+        .btn { padding: 5px 10px; margin: 2px; cursor: pointer; border: none; border-radius: 3px; }
+        .btn-remove { background-color: #ff4444; color: white; }
+        .btn-update { background-color: #4CAF50; color: white; }
+        .btn-checkout { background-color: #FF9800; color: white; padding: 10px 20px; font-size: 16px; text-decoration: none; border-radius: 5px; display: inline-block; }
+        .btn-checkout:hover { background-color: #e68900; }
+        input[type="number"] { width: 50px; }
+        .messages { color: green; font-weight: bold; }
+        .nav { margin: 20px 0; }
+        .nav a { margin-right: 15px; }
+        .actions { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Корзина</h1>
+    
+    <div class="nav">
+        <a href="{% url 'product_list' %}">← Продолжить покупки</a>
+        <a href="{% url 'home' %}">На главную</a>
+    </div>
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if cart.items.all %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Товар</th>
+                    <th>Цена</th>
+                    <th>Количество</th>
+                    <th>Стоимость</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart.items.all %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td>{{ item.product.price }} руб.</td>
+                        <td>
+                            <form method="post" action="{% url 'update_cart' item_id=item.id %}" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.product.quantity }}">
+                                <button type="submit" class="btn btn-update">Обновить</button>
+                            </form>
+                        </td>
+                        <td>{{ item.total_price }} руб.</td>
+                        <td>
+                            <form method="post" action="{% url 'remove_from_cart' item_id=item.id %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-remove">Удалить</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div class="total">Общая стоимость: {{ cart.total_price }} руб.</div>
+        
+        <div class="actions">
+            <a href="{% url 'checkout' %}" class="btn-checkout">Оформить заказ</a>
+        </div>
+    {% else %}
+        <p>Корзина пуста</p>
+    {% endif %}
+</body>
+</html>
